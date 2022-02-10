@@ -1,6 +1,6 @@
 'use strict'
 console.log(__dirname)
-import { app, protocol, BrowserWindow } from 'electron'
+import { app, protocol, BrowserWindow, ipcMain } from 'electron'
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
 import installExtension, { VUEJS3_DEVTOOLS } from 'electron-devtools-installer'
 const isDevelopment = process.env.NODE_ENV !== 'production'
@@ -39,10 +39,11 @@ function fileHandler(req, callback){
 
 // Then in electron main.js
 
+let win;
 
 async function createWindow() {
   // Create the browser window.
-  const win = new BrowserWindow({
+  win = new BrowserWindow({
     width: 800,
     height: 600,
     webPreferences: {
@@ -122,3 +123,21 @@ if (isDevelopment) {
     })
   }
 }
+
+ipcMain.handle('app_version', () => {
+  return { version: app.getVersion() };
+});
+
+autoUpdater.on('update-available', () => {
+  console.log('app update available')
+  return 'update_available';
+});
+autoUpdater.on('update-downloaded', () => {
+  // win.webContents.send('update_downloaded');
+  console.log('updating');
+  autoUpdater.quitAndInstall();
+});
+
+ipcMain.on('restart_app', () => {
+  autoUpdater.quitAndInstall();
+});

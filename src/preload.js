@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path')
 const os = require("os")
-const { contextBridge } = require('electron')
+const { contextBridge, ipcRenderer } = require('electron')
 
 class VideoApi {
     constructor() {
@@ -23,7 +23,7 @@ class VideoApi {
         let videoStats = videos.map(vPath => {
             let vFullPath = path.join(this.filePath, vPath)
             let videoPath = `video:////${vFullPath}`
-            let video = {path: vFullPath, name: vPath, videoPath}
+            let video = { path: vFullPath, name: vPath, videoPath }
             video.stats = fs.statSync(vFullPath)
             return video;
         })
@@ -36,12 +36,14 @@ class VideoApi {
 }
 
 const video = new VideoApi();
-
+// let version = console.log(app.getVersion);
 contextBridge.exposeInMainWorld(
-  'electron',
-  {
-      getVideos() {
-          return video.videos;
-      }
-  }
+    'electron',
+    {
+        getVideos() {
+            return video.videos;
+        },
+        ipcRenderer,
+        ipcRendererOn: ipcRenderer.on
+    }
 )

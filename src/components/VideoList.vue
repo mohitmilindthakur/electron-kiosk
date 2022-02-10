@@ -1,6 +1,7 @@
 <template>
   <div>
-    <h1>v0.1.3</h1>
+    <h1>{{ appVersion }}</h1>
+    <h5>{{ message }}</h5>
     <div class="video-list">
       <div
         tabindex="0"
@@ -36,7 +37,7 @@
 
 <script>
 // import VideoPlayer from "./video-player.vue";
-import axios from 'axios';
+import axios from "axios";
 export default {
   components: {
     // VideoPlayer,
@@ -44,6 +45,8 @@ export default {
   data() {
     return {
       videos: window.electron.getVideos(),
+      appVersion: "",
+      message: "",
       selectedVideo: null,
       videoOptions: {
         autoplay: true,
@@ -67,16 +70,36 @@ export default {
         type: `video/video.path.split(".").pop()`,
       };
       this.videoOptions.sources = [src];
-      
+
       this.selectedVideo = video;
+    },
+
+    restartApp() {
+      window.electron.ipcRenderer.send("restart_app");
     },
   },
 
-   mounted() {
-        axios.get("https://jsonplaceholder.typicode.com/todos/1")
-        .then(response => response.data)
-        .then(data => console.log(data));
-    }
+  mounted() {
+    console.log(window.electron.ipcRenderer);
+    axios
+      .get("https://jsonplaceholder.typicode.com/todos/1")
+      .then((response) => response.data)
+      .then((data) => console.log(data));
+
+    window.electron.ipcRenderer.send("app_version");
+
+    window.electron.ipcRenderer.invoke("app_version").then((result) => {
+      console.log("appversion render");
+      // window.electron.ipcRendererOn.removeAllListeners("app_version");
+      let appVersion = "v" + result.version;
+      console.log(appVersion);
+      this.appVersion = appVersion;
+    });
+
+    // window.electron.ipcRenderer.invoke("update_available").then( () => {
+    //   this.message = "A new update is available. Downloading now...";
+    // });
+  },
 };
 </script>
 
@@ -132,8 +155,8 @@ export default {
 }
 
 .video {
-    width: 95vw;
-    height: auto;
-    background-color: black;
+  width: 95vw;
+  height: auto;
+  background-color: black;
 }
 </style>
