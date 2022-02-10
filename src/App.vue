@@ -1,10 +1,27 @@
 <template>
-  <div id="nav">
-    <router-link to="/">Home</router-link> |
-    <router-link to="/about">About</router-link>
+  <div id="nav"></div>
+  <!-- {{dirName}} -->
+
+  <div>
+    <VideoList />
   </div>
-  <router-view/>
+  <router-view />
 </template>
+
+<script>
+// import {ipcRenderer} from 'electron'
+import VideoList from '@/components/VideoList.vue'
+export default {
+  components: {
+    VideoList
+  },
+  data() {
+    return {
+      // videos: window.electron.getVideos()
+    }
+  }
+};
+</script>
 
 <style lang="scss">
 #app {
