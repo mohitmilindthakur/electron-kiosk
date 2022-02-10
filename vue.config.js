@@ -10,6 +10,3 @@ module.exports = {
       }
     }
   }
-
-
-  // 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
