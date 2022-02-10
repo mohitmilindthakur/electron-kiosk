@@ -1,5 +1,6 @@
 <template>
   <div>
+    <h1>Hello</h1>
     <div class="video-list">
       <div
         tabindex="0"
