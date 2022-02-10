@@ -68,10 +68,8 @@ async function createWindow() {
     win.loadURL('app://./index.html')
   }
 
-  win.once('ready-to-show', () => {
-    autoUpdater.checkForUpdatesAndNotify();
-  });
-  
+  console.log('autoupdate')
+  autoUpdater.checkForUpdatesAndNotify();
 }
 
 // Quit when all windows are closed.
